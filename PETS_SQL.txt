@@ -1,0 +1,15 @@
+CREATE TABLE `pets` (
+ `pet_id` int(11) NOT NULL AUTO_INCREMENT,
+ `posted_by` varchar(200) NOT NULL,
+ `town` varchar(100) NOT NULL,
+ `province` varchar(50) NOT NULL,
+ `email` varchar(254) NOT NULL,
+ `telephone` varchar(30) NOT NULL,
+ `latitude` varchar(20) DEFAULT NULL,
+ `longitude` varchar(20) DEFAULT NULL,
+ `description` varchar(100) DEFAULT NULL,
+ `area` varchar(20) DEFAULT NULL,
+ `photos` text,
+ `date_posted` datetime DEFAULT NULL,
+ PRIMARY KEY (`pet_id`)
+);
