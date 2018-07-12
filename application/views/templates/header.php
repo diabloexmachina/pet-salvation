@@ -30,24 +30,24 @@
 
           <li class="nav-item">
 
-          <a href="<?php echo base_url('pet/index'); ?>" class="nav-link"  role="button" aria-haspopup="true" aria-expanded="false"><strong>HOME</strong></a>
+          <a href="<?php echo base_url('pet/index'); ?>" class="nav-link"  role="button" aria-haspopup="true" aria-expanded="false">HOME</a>
 
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="<?php echo base_url('pet/add/pet-info'); ?>" role="button" aria-haspopup="true" aria-expanded="false"><strong>ADD PET</strong></a>
+            <a class="nav-link" href="<?php echo base_url('pet/add/pet-info'); ?>" role="button" aria-haspopup="true" aria-expanded="false">ADD PET</a>
           </li>
                             
 
          <li class="nav-item">
 
-          <a class="nav-link"  href="<?php echo base_url('pet/contact'); ?>"   role="button" aria-haspopup="true" aria-expanded="false"><strong>CONTACT</strong></a>
+          <a class="nav-link"  href="<?php echo base_url('pet/contact'); ?>"   role="button" aria-haspopup="true" aria-expanded="false">CONTACT</a>
 
          </li>
 
         <li class="nav-item">
           
-          <a class="nav-link" href="<?php echo base_url('pet/about'); ?>" role="button" aria-haspopup="true" aria-expanded="false"><strong>ABOUT</strong></a>
+          <a class="nav-link" href="<?php echo base_url('pet/about'); ?>" role="button" aria-haspopup="true" aria-expanded="false">ABOUT</a>
 
         </li>
 
@@ -57,13 +57,13 @@
 
            <li class="nav-item">
 
-            <a  class="nav-link" href="<?php echo base_url('user/login'); ?>" role="button" aria-haspopup="true" aria-expanded="false"><strong>LOGIN</strong></a>
+            <a  class="nav-link" href="<?php echo base_url('user/login'); ?>" role="button" aria-haspopup="true" aria-expanded="false">LOGIN</a>
 
            </li>
 
            <li class="nav-item">
 
-              <a class="nav-link" href="<?php echo base_url('user/logout'); ?>" role="button" aria-haspopup="true" aria-expanded="false"><strong>LOGOUT</strong></a>
+              <a class="nav-link" href="<?php echo base_url('user/logout'); ?>" role="button" aria-haspopup="true" aria-expanded="false">LOGOUT</a>
 
            </li>
 
