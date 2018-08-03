@@ -147,62 +147,28 @@ class pet extends CI_Controller {
                   }else{
 
 
-                       $file_tag_name = 'multipleFiles';
-                      //check if file present before file upload
-                       if (count($_FILES['multipleFiles']['name'])>0){
+                      $file_tag_name = 'multipleFiles';
+                      $number_of_files=count($_FILES['multipleFiles']['name']);
 
-                                  $number_of_files_uploaded=count($_FILES['multipleFiles']['name']);
-                                  $files=$_FILES;
-                                  $file_names=array();
+                      if($number_of_files > 0){
+                            
+                                  $file_names=$this->do_multiupload($_FILES,$form,$file_tag_name,$category,$number_of_files);
 
-                                  if(!is_dir('uploads')){
-                                    mkdir('./uploads',777,true);   
-                                  }
+                                  if($file_names!==NULL){
 
-
-                                  //upload each file in file array
-                                  for($i=0;$i<$number_of_files_uploaded;$i++){
-
-                                       $_FILES['multipleFiles']['name']=$files['multipleFiles']['name'][$i];
-                                       $_FILES['multipleFiles']['type']=$files['multipleFiles']['type'][$i];
-                                       $_FILES['multipleFiles']['tmp_name']=$files['multipleFiles']['tmp_name'][$i];
-                                       $_FILES['multipleFiles']['size']=$files['multipleFiles']['size'][$i];
-                                       $_FILES['multipleFiles']['error']=$files['multipleFiles']['error'][$i];
-
-                                       $upload_path='./uploads/';
-                                       $config['upload_path'] = $upload_path;
-                                       $config['allowed_types'] ='png|jpg|gif';
-                                       $config['max_size'] = '2048';
-                                       $config['overwrite'] = TRUE;
-                                       $config['remove_spaces'] = TRUE;
+                                                    //upload done now save file names to database
+                                        $this->listing_model->set_pet($file_names);
+                                        $this->session->set_flashdata('status_message','The listing was successfully submitted.Images were uploaded.');
+                                        redirect('listing/home');
 
 
-                                       $this->upload->initialize($config);
+                                  }else{
 
-                                       if($this->upload->do_upload($file_tag_name)){
 
-                                            $file_name=$this->upload->data('file_name');
-                                            array_push($file_names,$file_name);
-                                            
-                
-                                       }else{
-
-                                            //file uploaded has errors
-
-                                            $data['upload_error']= $this->upload->display_errors('<p class="text-center">', '</p>');
-                                            $this->load->view('templates/header',$data);
-                                            $this->load->view('pet/pet_form',$data);
-                                            $this->load->view('templates/footer');
-             
-                                       }
+                                      exit("function is not working as it should");
 
 
                                   }
-
-                                  //upload done now save file names to database
-                                  $this->pet_model->set_pet($file_names);
-                                  $this->session->set_flashdata('status_message','The pet was successfully submitted.A file was attached.');
-                                  redirect('pet/index');
                 
             
                       }else{
@@ -257,7 +223,9 @@ class pet extends CI_Controller {
 
                     //if($this->session->userdata('logged_in')){
                              $category="pet";
+                             $form="pet_form";
                              $id=$id;
+                             
                              if ($id===FALSE){
                                     show_404();
                              }
@@ -281,16 +249,45 @@ class pet extends CI_Controller {
 
                             }else{//form entries are valid so proceed
 
+                                  $file_tag_name = 'multipleFiles';
+                                  $number_of_files=count($_FILES['multipleFiles']['name']);
+
+                                if($number_of_files > 0){
+                            
+                                      $file_names=$this->do_multiupload($_FILES,$form,$file_tag_name,$category,$number_of_files);
+
+                                      if($file_names!==NULL){
+
+                                                    //upload done now save file names to database
+                                         $this->listing_model->set_pet($id,$file_names);
+                                         $this->session->set_flashdata('status_message','The listing was successfully submitted.Images were uploaded.');
+                                         redirect('listing/home');
+
+
+                                      }else{
+
+
+                                         exit("function is not working as it should");
+
+
+                                      }
+
+
+                                }else{
                                   //if validation was a success enter data into database and show the user a success message.
-                                  $this->pet_model->update_pet($id);
-                                  $this->session->set_flashdata('status_message','The pet was successfully updated.');
+
+
+                                  $this->pet_model->update_pet($id,$filenames=NULL);
+                                  $this->session->set_flashdata('status_message','The pet information was successfully updated.');
                                   redirect('pet/index');
+
+                                }
                             
                             }
 
                       //}else{
 
-                            //$this->session->set_flashdata('status_message','Please login to edit pets.');
+                            //$this->session->set_flashdata('status_message','Please login to edit pet information.');
                             //redirect('admin/login');
                       //}
 
@@ -442,6 +439,83 @@ class pet extends CI_Controller {
         }
 
 
+        //function that carries out uploads and returns an array of file names
+        private function do_multiupload($files=NULL,$form="",$file_tag_name="",$category,$number_of_files=NULL){
+
+                      $file_names=array();
+
+                      if(!is_dir('uploads')){
+                          mkdir('./uploads',777,true);   
+                      }
+
+                      //upload each file in file array
+                      for($i = 0; $i < $number_of_files; $i++){
+
+                                $_FILES['multipleFiles']['name']=$files['multipleFiles']['name'][$i];
+                                $_FILES['multipleFiles']['type']=$files['multipleFiles']['type'][$i];
+                                $_FILES['multipleFiles']['tmp_name']=$files['multipleFiles']['tmp_name'][$i];
+                                $_FILES['multipleFiles']['size']=$files['multipleFiles']['size'][$i];
+                                $_FILES['multipleFiles']['error']=$files['multipleFiles']['error'][$i];
+
+                                $upload_path='./uploads/';
+                                $config['upload_path'] = $upload_path;
+                                $config['allowed_types'] ='png|jpg|jpeg';
+                                $config['max_size'] = '2048';
+                                $config['overwrite'] = TRUE;
+                                $config['remove_spaces'] = TRUE;
+
+                                $this->upload->initialize($config);
+
+                                if($this->upload->do_upload('multipleFiles')){
+
+                                        $file_name=$this->upload->data('file_name');
+
+                                        //alternative code to prevent stretching 
+                                        $config_r['image_library'] = 'gd2';
+                                        $config_r['source_image'] = $upload_path.$file_name;
+                                        $config_r['maintain_ratio'] = TRUE;
+                                        $config_r['width']  = 450;
+                                        $config_r['height'] = 330;
+                                        $config_r['quality']  = 90;
+                                        $config['new_image'] = $upload_path.$file_name;
+                                      //end of config
+
+                                      //use config
+                                        $this->image_lib->initialize($config_r);
+                                      //run resize
+                                        if(!$this->image_lib->resize()){
+
+                                            $data['resize_error']=$this->image_lib->display_errors();
+
+                                        }
+                                        //clear
+                                        $this->image_lib->clear();
+
+                                        
+                                            //add file name to array
+                                        array_push($file_names,$file_name);
+
+                                }else{
+
+                                    //file uploaded has errors
+                                        $data['upload_error']= $this->upload->display_errors();
+                                        $this->load->view('templates/header',$data);
+                                        $this->load->view('pet/'.$form,$data);
+                                        $this->load->view('templates/footer');
+             
+                                }
+                  
+
+                       }
+
+                       return $file_names;
+
+        }
+
+
+
+
+
 //function to contact site admin
          public function contact() {
 
@@ -482,7 +556,7 @@ class pet extends CI_Controller {
                                 $email_message .= "Message: ".clean_string($comments)."\n";
 
                                 $this->email->from('your@example.com',$email_from);
-                                $this->email->to('lodgeassistadmin@gmail.com');
+                                $this->email->to('zadsadmin@gmail.com');
 
                                 $this->email->subject('Email Test');
                                 $this->email->message($message);
